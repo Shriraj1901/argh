@@ -922,6 +922,64 @@ Required options not provided:
 "###,
         );
     }
+
+    #[derive(FromArgs, Debug, PartialEq)]
+    #[argh(subcommand, name = "sub")]
+    /// A subcommand
+    struct Sub {}
+
+    #[derive(FromArgs, Debug, PartialEq)]
+    #[argh(subcommand)]
+    enum RequiredSubCommand {
+        Sub(Sub),
+    }
+
+    #[derive(FromArgs, Debug, PartialEq)]
+    /// Woot
+    struct PositionalAndSubCommand {
+        #[argh(positional)]
+        /// fooey
+        a: String,
+        #[argh(subcommand)]
+        command: RequiredSubCommand,
+    }
+
+    #[derive(FromArgs, Debug, PartialEq)]
+    /// Woot
+    struct OptionPositionalAndSubCommand {
+        #[argh(option)]
+        /// fooey
+        opt: String,
+        #[argh(positional)]
+        /// fooey
+        a: String,
+        #[argh(subcommand)]
+        command: RequiredSubCommand,
+    }
+
+    #[test]
+    fn missing_positional_and_subcommand_are_on_separate_lines() {
+        assert_error::<PositionalAndSubCommand>(
+            &[],
+            r###"Required positional arguments not provided:
+    a
+One of the following subcommands must be present:
+    help
+    sub
+"###,
+        );
+        assert_error::<OptionPositionalAndSubCommand>(
+            &[],
+            r###"Required positional arguments not provided:
+    a
+Required options not provided:
+    --opt
+One of the following subcommands must be present:
+    help
+    sub
+"###,
+        );
+    }
 }
 
 /// Tests derived from

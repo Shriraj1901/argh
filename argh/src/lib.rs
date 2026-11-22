@@ -1362,7 +1362,7 @@ impl MissingRequirements {
         }
 
         if let Some(missing_subcommands) = &self.subcommands {
-            if !self.options.is_empty() {
+            if !output.is_empty() {
                 output.push('\n');
             }
             output.push_str("One of the following subcommands must be present:");
